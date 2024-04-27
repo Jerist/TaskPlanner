@@ -20,4 +20,5 @@ public class Task {
     private LocalDateTime deadline;
     private Status status;
     private Priority priority;
+    private User user;
 }
