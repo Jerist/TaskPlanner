@@ -30,7 +30,7 @@ public class TasksListServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final UserControllerDto user = (UserControllerDto) req.getSession().getAttribute(NAME_ATTRIBUTE_USER);
         final List<TaskViewDto> tasksListDto =
-                taskService.selectAllTasksByUserId(user.idUser()).stream().map(taskMapper::map).toList();
+                taskService.selectAllTasksByUserId(user.idUser()).stream().map(taskMapper::mapController).toList();
         req.setAttribute("tasksList", tasksListDto);
         req.getRequestDispatcher(JspPathCreator.getUserPath(TASKS_LIST_JSP)).forward(req, resp);
     }

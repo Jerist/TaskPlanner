@@ -3,7 +3,6 @@ package ru.bulavin.repository;
 import ru.bulavin.entity.Priority;
 import ru.bulavin.entity.Status;
 import ru.bulavin.entity.Task;
-import ru.bulavin.entity.User;
 import ru.bulavin.exception.DaoException;
 import ru.bulavin.processing.ConnectionGetter;
 
@@ -167,20 +166,21 @@ public class TaskDao implements BaseDao<Task> {
         preparedStatement.setString(1, task.getName());
         preparedStatement.setString(2, task.getDescription());
         preparedStatement.setTimestamp(3, Timestamp.valueOf(task.getDateStart()));
-        preparedStatement.setTimestamp(4, Timestamp.valueOf(task.getDeadline()));
+        preparedStatement.setTimestamp(4, task.getDeadline()==null?null:Timestamp.valueOf(task.getDeadline()));
         preparedStatement.setString(5, task.getStatus().toString());
         preparedStatement.setString(6, task.getPriority().toString());
-        preparedStatement.setLong(7, task.getUser().getIdUser());
+        preparedStatement.setLong(7, task.getIdUser());
     }
     private Task extractTaskFromResultSet(ResultSet resultSet) throws SQLException {
         Long idTask = resultSet.getLong("id_task");
         String name = resultSet.getString("name");
         String description = resultSet.getString("description");
         LocalDateTime startDate = resultSet.getTimestamp("start_date").toLocalDateTime();
-        LocalDateTime deadline = resultSet.getTimestamp("deadline").toLocalDateTime();
+        Timestamp deadlineDate = resultSet.getTimestamp("deadline");
+        LocalDateTime deadline = deadlineDate==null?null:deadlineDate.toLocalDateTime();
         Status status = Status.valueOf(resultSet.getString("status"));
         Priority priority = Priority.valueOf(resultSet.getString("priority"));
-        User user = userDao.selectById(resultSet.getLong("id_user"));
+        Long idUser = resultSet.getLong("id_user");
         return Task.builder()
                 .idTask(idTask)
                 .name(name)
@@ -189,7 +189,7 @@ public class TaskDao implements BaseDao<Task> {
                 .deadline(deadline)
                 .status(status)
                 .priority(priority)
-                .user(user)
+                .idUser(idUser)
                 .build();
     }
 }

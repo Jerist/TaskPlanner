@@ -1,92 +1,119 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Registration</title>
+    <title>Task Manager</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: darkslateblue;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            justify-content: center;
-        }
-
-        .empty-list {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 20px auto;
-            width: 25%;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 2% 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            width: 16%;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"], input[type="password"], input[type="tel"], input[type="email"], input[type="submit"] {
-            padding: 8px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #5C7AEA;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: block;
-            margin: 10px auto;
-            width: 80%;
-        }
-
-        button:hover {
-            background-color: #3f5bcc;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        div {
-            margin: 10px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #483D8B; /* Установка цвета фона */
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            background-color: #f4f4f4;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .task {
+            margin: 20px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            width: 60%; /* Adjust the width as needed */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 10px; /* Закругление углов блока задач */
+        }
+        .task-info {
+            text-align: center;
+            width: 100%;
+        }
+        .task-actions {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        form {
+            margin: 0;
+            border: 2px solid #888; /* Граница для форм */
+            border-radius: 8px; /* Закругление углов форм */
+            padding: 10px;
+            background-color: #EEE; /* Фон форм */
+            width: auto;
+        }
+        input[type="submit"] {
+            border: none; /* Убраны границы у кнопок */
+            padding: 8px 16px;
+            border-radius: 5px; /* Закругление кнопок */
+            cursor: pointer;
+            background-color: #5A78E7;
+            color: white;
+            width: 100%;
+            height: 30px;
+        }
+        input[type="submit"]:hover {
+            background-color: #435BAE;
+        }
+        .logout {
+            height: 30px;
         }
     </style>
 </head>
 <body>
+<div class="header">
 
+    <form action="logout" class="logout" method="get">
+        <input type="submit" value="Logout">
+    </form>
+    <div>
+        <form action="addTask" method="get">
+            <input type="submit" value="Add New Task">
+        </form>
+        <form action="addProject" method="get">
+            <input type="submit" value="Add New Project">
+        </form>
+        <form action="filterTasks" method="get">
+            <input type="hidden" name="status" value="In Progress">
+            <input type="submit" value="Filter Tasks: In Progress">
+        </form>
+        <form action="showAllTasks" method="get">
+            <input type="submit" value="Show All Tasks">
+        </form>
+    </div>
+</div>
 
-<c:choose>
-    <c:when test="${not empty requestScope.tasksList}">
-
-
-
-    </c:when>
-    <c:otherwise>
-        <div class="empty-list">
-            Список задач пуст
+<!-- Отображение каждой задачи в отдельной форме -->
+<c:forEach var="task" items="${tasksList}">
+    <div class="task">
+        <div class="task-info">
+            <h3>${task.name()}</h3>
+            <p><strong>Description:</strong> ${task.description()}</p>
+            <p><strong>Start Date:</strong> ${task.dateStart()}</p>
+            <p><strong>Deadline:</strong> ${task.deadline()}</p>
+            <p><strong>Status:</strong> ${task.status()}</p>
+            <p><strong>Priority:</strong> ${task.priority()}</p>
         </div>
-    </c:otherwise>
-</c:choose>
+        <div class="task-actions">
+            <form action="updateTask" method="post">
+                <input type="hidden" name="idTask" value="${task.idTask()}">
+                <input type="submit" value="Update Task">
+            </form>
+            <form action="deleteTask" method="post">
+                <input type="hidden" name="idTask" value="${task.idTask()}">
+                <input type="submit" value="Delete Task" style="background-color: red;">
+            </form>
+        </div>
+    </div>
+</c:forEach>
+</body>
+</html>

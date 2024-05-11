@@ -9,5 +9,6 @@ public record TaskViewDto(String idTask,
                                 String dateStart,
                                 String deadline,
                                 String status,
-                                String priority) {
+                                String priority,
+                                String idUser) {
 }

@@ -1,6 +1,7 @@
 package ru.bulavin.service;
 
 import ru.bulavin.dto.task.controller.TaskControllerDto;
+import ru.bulavin.entity.Task;
 import ru.bulavin.mapper.TaskMapper;
 import ru.bulavin.repository.TaskDao;
 
@@ -16,8 +17,9 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public void insertTask() {
-
+    public void insertTask(TaskControllerDto taskControllerDto) {
+        Task task = taskMapper.map(taskControllerDto);
+        taskDao.insert(task);
     }
     public List<TaskControllerDto> selectAllTasksByUserId(Long id) {
         return taskDao.selectByUserId(id).stream().map(taskMapper::map).collect(Collectors.toList());

@@ -13,5 +13,6 @@ public record TaskControllerDto(Long idTask,
                                 LocalDateTime dateStart,
                                 LocalDateTime deadline,
                                 Status status,
-                                Priority priority) {
+                                Priority priority,
+                                Long idUser) {
 }

@@ -10,6 +10,7 @@ import ru.bulavin.entity.Task;
 public class TaskMapper {
     public TaskControllerDto map(Task obj) {
         return TaskControllerDto.builder()
+                .idTask(obj.getIdTask())
                 .name(obj.getName())
                 .description(obj.getDescription())
                 .dateStart(obj.getDateStart())
@@ -18,12 +19,26 @@ public class TaskMapper {
                 .priority(obj.getPriority())
                 .build();
     }
-    public TaskViewDto map(TaskControllerDto obj) {
-        return TaskViewDto.builder()
+
+    public Task map(TaskControllerDto obj) {
+        return Task.builder()
+                .idTask(obj.idTask())
                 .name(obj.name())
                 .description(obj.description())
+                .dateStart(obj.dateStart())
+                .deadline(obj.deadline())
+                .status(obj.status())
+                .priority(obj.priority())
+                .idUser(obj.idUser())
+                .build();
+    }
+
+    public TaskViewDto mapController(TaskControllerDto obj) {
+        return TaskViewDto.builder()
+                .name(obj.name())
+                .description(obj.description().isEmpty()?"-":obj.description())
                 .dateStart(obj.dateStart().toString())
-                .deadline(obj.deadline().toString())
+                .deadline(obj.deadline()==null?"-":obj.deadline().toString())
                 .status(obj.status().toString())
                 .priority(obj.priority().toString())
                 .build();

@@ -16,9 +16,9 @@ import ru.bulavin.processing.validator.RegistrationUserValidator;
 import ru.bulavin.processing.validator.load.LoadValidationResult;
 import ru.bulavin.service.UserService;
 import ru.bulavin.utils.JspPathCreator;
+import ru.bulavin.utils.UrlPathGetter;
 
 import java.io.IOException;
-import java.util.List;
 
 import static ru.bulavin.utils.AttributeGetter.NAME_ATTRIBUTE_ERRORS;
 import static ru.bulavin.utils.JspPathGetter.REGISTRATION_JSP;
@@ -30,7 +30,7 @@ import static ru.bulavin.utils.UrlPathGetter.REGISTRATION_URL;
 public class RegistrationServlet extends HttpServlet {
 
     private static UserService userService;
-    private RegistrationUserValidator registrationUserValidator;
+    private static RegistrationUserValidator registrationUserValidator;
     private static UserMapper userMapper;
 
 
@@ -55,7 +55,7 @@ public class RegistrationServlet extends HttpServlet {
         if (result.isEmpty()) {
             UserRegistrationControllerDto userRegistrationControllerDto = userMapper.map(userRegistrationViewDto);
             userService.insertUser(userRegistrationControllerDto);
-            resp.sendRedirect(LOGIN_URL);
+            resp.sendRedirect(UrlPathGetter.getFullPath(LOGIN_URL));
         } else {
             req.setAttribute(NAME_ATTRIBUTE_ERRORS, result.getLoadErrors());
             doGet(req, resp);

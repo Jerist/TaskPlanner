@@ -95,7 +95,7 @@
     </div>
     <div>
         <label for="phone">Телефон:</label>
-        <input type="tel" placeholder="+7(123)456-78-90" pattern="+7([0-9]{3})[0-9]{3}-[0-9]{2}-[0-9]{2}" id="phone" name="phone" required>
+        <input type="tel" placeholder="+*(***)***-**-**" id="phone" name="phone" required>
     </div>
     <div>
         <label for="email">Email:</label>
