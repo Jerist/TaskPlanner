@@ -67,6 +67,13 @@
         .logout {
             height: 30px;
         }
+        .message {
+            margin-top: 10px;
+            border: 2px solid #888; /* Граница для форм */
+            border-radius: 8px; /* Закругление углов форм */
+            padding: 10px;
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -92,7 +99,13 @@
     </div>
 </div>
 
-<!-- Отображение каждой задачи в отдельной форме -->
+<c:if test="${sessionScope.message!=null}">
+    <div class = "message">
+            ${sessionScope.message}
+    </div>
+    <c:remove var="message" scope="session"/>
+</c:if>
+
 <c:forEach var="task" items="${tasksList}">
     <div class="task">
         <div class="task-info">

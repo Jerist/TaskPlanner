@@ -10,6 +10,7 @@ public class UrlPathGetter {
     public static final String DEFAULT_URL = TASKS_LIST_URL;
     public static final String LOGOUT_URL = "/user/logout";
     public static final String ADD_TASK_URL = "/user/addTask";
+    public static final String DELETE_TASK_URL = "/user/deleteTask";
 
     public static String getFullPath(String relativePath) {
         return "/TaskPlanner" + relativePath;

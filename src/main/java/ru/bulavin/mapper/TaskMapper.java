@@ -35,6 +35,7 @@ public class TaskMapper {
 
     public TaskViewDto mapController(TaskControllerDto obj) {
         return TaskViewDto.builder()
+                .idTask(obj.idTask().toString())
                 .name(obj.name())
                 .description(obj.description().isEmpty()?"-":obj.description())
                 .dateStart(obj.dateStart().toString())

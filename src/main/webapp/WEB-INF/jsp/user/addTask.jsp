@@ -78,6 +78,7 @@
     <div class="task_add_message">
         <p>Задача успешно добавлена!</p>
     </div>
+    <c:remove var="message" scope="session"/>
 </c:if>
 
 <div class="form-container">
