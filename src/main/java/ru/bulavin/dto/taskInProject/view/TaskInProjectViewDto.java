@@ -4,7 +4,14 @@ import lombok.Builder;
 
 @Builder
 public record TaskInProjectViewDto(String idTaskInProject,
-                                   String task,
-                                   String project,
+                                   String idTask,
+                                   String name,
+                                   String description,
+                                   String dateStart,
+                                   String deadline,
+                                   String status,
+                                   String priority,
+                                   String idUser,
+                                   String idProject,
                                    String dateOfAddition) {
 }

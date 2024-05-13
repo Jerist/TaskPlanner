@@ -33,10 +33,11 @@ public class ProjectDao implements BaseDao<Project> {
     private final String SELECT_PROJECTS_BY_USER_ID = "SELECT * FROM project WHERE id_user = ?;";
 
     //language=PostgreSQL
-    private final String INSERT_PROJECT = "INSERT INTO project (name, id_user) VALUES (?, ?);";
+    private final String INSERT_PROJECT = "INSERT INTO project (name, description, id_user) VALUES (?, ?, ?);";
 
     //language=PostgreSQL
-    private final String UPDATE_PROJECT = "UPDATE project SET name = ?, id_user = ? WHERE id_project = ?;";
+    private final String UPDATE_PROJECT = "UPDATE project SET name = ?, description = ?," +
+            " id_user = ? WHERE id_project = ?;";
 
     //language=PostgreSQL
     private final String DELETE_PROJECT = "DELETE FROM project WHERE id_project = ?;";
@@ -110,7 +111,7 @@ public class ProjectDao implements BaseDao<Project> {
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_PROJECT)) {
 
             setStatement(project, preparedStatement);
-            preparedStatement.setLong(3, project.getIdProject());
+            preparedStatement.setLong(4, project.getIdProject());
 
             return preparedStatement.executeUpdate();
         } catch (SQLException | InterruptedException e) {
@@ -122,10 +123,9 @@ public class ProjectDao implements BaseDao<Project> {
         List<Project> projects = new ArrayList<>();
 
         try (Connection connection = connectionGetter.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROJECTS_BY_USER_ID);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_PROJECTS_BY_USER_ID)) {
             preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 projects.add(extractProjectFromResultSet(resultSet));
             }
@@ -137,17 +137,20 @@ public class ProjectDao implements BaseDao<Project> {
 
     private void setStatement(Project project, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, project.getName());
-        preparedStatement.setLong(2, project.getUser().getIdUser());
+        preparedStatement.setString(2, project.getDescription());
+        preparedStatement.setLong(3, project.getIdUser());
     }
 
     private Project extractProjectFromResultSet(ResultSet resultSet) throws SQLException {
         Long idProject = resultSet.getLong("id_project");
         String name = resultSet.getString("name");
-        User user = userDao.selectById(resultSet.getLong("id_user"));
+        String description = resultSet.getString("description");
+        Long idUser = resultSet.getLong("id_user");
         return Project.builder()
                 .idProject(idProject)
                 .name(name)
-                .user(user)
+                .description(description)
+                .idUser(idUser)
                 .build();
     }
 }

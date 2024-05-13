@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static ru.bulavin.utils.AttributeGetter.*;
+import static ru.bulavin.utils.JspPathGetter.ADD_PROJECT_JSP;
 import static ru.bulavin.utils.JspPathGetter.ADD_TASK_JSP;
 import static ru.bulavin.utils.UrlPathGetter.ADD_TASK_URL;
 
@@ -57,6 +58,6 @@ public class AddTaskServlet extends HttpServlet {
 
         taskService.insertTask(taskControllerDto);
         req.setAttribute(NAME_MESSAGE_ADD_TASK, "Задача успешно добавлена");
-        doGet(req, resp);
+        req.getRequestDispatcher(JspPathCreator.getUserPath(ADD_TASK_JSP)).forward(req, resp);
     }
 }

@@ -24,7 +24,16 @@ public class TaskService {
     public List<TaskControllerDto> selectAllTasksByUserId(Long id) {
         return taskDao.selectByUserId(id).stream().map(taskMapper::map).collect(Collectors.toList());
     }
+    public List<TaskControllerDto> selectAllActiveTasksByUserId(Long id) {
+        return taskDao.selectActiveTasksByUserId(id).stream().map(taskMapper::map).collect(Collectors.toList());
+    }
+    public TaskControllerDto selectById(Long id) {
+        return taskMapper.map(taskDao.selectById(id));
+    }
     public void deleteTask(Long id) {
         taskDao.delete(id);
+    }
+    public void update(TaskControllerDto task) {
+        taskDao.update(taskMapper.map(task));
     }
 }

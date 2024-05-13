@@ -15,7 +15,14 @@ import java.time.LocalDateTime;
 @Builder
 public class TaskInProject {
     private Long idTaskInProject;
-    private Task task;
-    private Project project;
+    private Long idTask;
+    private String name;
+    private String description;
+    private LocalDateTime dateStart;
+    private LocalDateTime deadline;
+    private Status status;
+    private Priority priority;
+    private Long idUser;
+    private Long idProject;
     private LocalDateTime dateOfAddition;
 }

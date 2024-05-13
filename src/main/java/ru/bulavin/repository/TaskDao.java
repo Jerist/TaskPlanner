@@ -19,11 +19,9 @@ import java.util.List;
 
 public class TaskDao implements BaseDao<Task> {
     private final ConnectionGetter connectionGetter;
-    private final UserDao userDao;
 
-    public TaskDao(ConnectionGetter connectionGetter, UserDao userDao) {
+    public TaskDao(ConnectionGetter connectionGetter) {
         this.connectionGetter = connectionGetter;
-        this.userDao = userDao;
     }
 
 
@@ -34,6 +32,10 @@ public class TaskDao implements BaseDao<Task> {
 
     //language=PostgreSQL
     private static final String SELECT_ALL_TASKS = "SELECT * FROM task;";
+
+    //language=PostgreSQL
+    private static final String SELECT_ACTIVE_TASKS_BY_USER_ID = "SELECT * FROM task WHERE status='InProcess' " +
+            "AND start_date <= NOW() AND id_user = ?;";
 
     //language=PostgreSQL
     private static final String SELECT_TASK_BY_ID ="SELECT * FROM task WHERE id_task = ?;";
@@ -50,7 +52,7 @@ public class TaskDao implements BaseDao<Task> {
 
     //language=PostgreSQL
     private static final String UPDATE_TASK = "UPDATE task " +
-            "SET name = ?, description = ?, start_date = ?, deadline = ?, status = ?, priority = ?, id_user = ?" +
+            "SET name = ?, description = ?, start_date = ?, deadline = ?, status = ?, priority = ?, id_user = ? " +
             "WHERE id_task = ?;";
 
 
@@ -122,12 +124,28 @@ public class TaskDao implements BaseDao<Task> {
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_TASK)) {
 
             setStatement(task, preparedStatement);
-            preparedStatement.setLong(6, task.getIdTask());
+            preparedStatement.setLong(8, task.getIdTask());
 
             return preparedStatement.executeUpdate();
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }
+    }
+
+    public List<Task> selectActiveTasksByUserId(Long id) {
+        List<Task> tasks = new ArrayList<>();
+        try (Connection connection = connectionGetter.get();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ACTIVE_TASKS_BY_USER_ID)) {
+
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                tasks.add(extractTaskFromResultSet(resultSet));
+            }
+        } catch (SQLException | InterruptedException e) {
+            throw new DaoException(e);
+        }
+        return tasks;
     }
 
     public List<Task> selectByUserId(Long id) {

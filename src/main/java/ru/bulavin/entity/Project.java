@@ -14,5 +14,6 @@ import lombok.Setter;
 public class Project {
     private Long idProject;
     private String name;
-    private User user;
+    private String description;
+    private Long idUser;
 }
