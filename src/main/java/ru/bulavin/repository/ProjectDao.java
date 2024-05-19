@@ -1,9 +1,8 @@
 package ru.bulavin.repository;
 
 import ru.bulavin.entity.Project;
-import ru.bulavin.entity.User;
 import ru.bulavin.exception.DaoException;
-import ru.bulavin.processing.ConnectionGetter;
+import ru.bulavin.processing.connection.ConnectionGetter;
 
 
 import java.sql.Connection;
@@ -44,18 +43,19 @@ public class ProjectDao implements BaseDao<Project> {
 
 
     @Override
-    public void insert(Project project) {
+    public boolean insert(Project project) {
         try (Connection connection = connectionGetter.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PROJECT, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(project, preparedStatement);
 
-            preparedStatement.executeUpdate();
+            boolean result = preparedStatement.executeUpdate() > 0;
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 project.setIdProject(generatedKeys.getLong("id_project"));
             }
+            return result;
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }

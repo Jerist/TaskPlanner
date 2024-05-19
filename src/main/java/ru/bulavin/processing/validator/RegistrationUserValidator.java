@@ -1,5 +1,6 @@
 package ru.bulavin.processing.validator;
 
+import ru.bulavin.dto.user.controller.UserRegistrationControllerDto;
 import ru.bulavin.dto.user.view.UserRegistrationViewDto;
 import ru.bulavin.processing.check.EmailCheck;
 import ru.bulavin.processing.check.NameCheck;
@@ -26,12 +27,12 @@ public class RegistrationUserValidator {
         this.phoneCheck = phoneCheck;
     }
 
-    public LoadValidationResult isValid(UserRegistrationViewDto userRegistrationViewDto) {
+    public LoadValidationResult isValid(UserRegistrationControllerDto user) {
         LoadValidationResult result = new LoadValidationResult();
-        checkName(userRegistrationViewDto, result);
-        checkPhone(userRegistrationViewDto, result);
-        checkEmail(userRegistrationViewDto, result);
-        checkPassword(userRegistrationViewDto, result);
+        checkName(user, result);
+        checkPhone(user, result);
+        checkEmail(user, result);
+        checkPassword(user, result);
         return result;
     }
 
@@ -39,8 +40,8 @@ public class RegistrationUserValidator {
         return str == null || str.trim().isEmpty();
     }
 
-    private void checkName(UserRegistrationViewDto userRegistrationViewDto, LoadValidationResult loadValidationResult) {
-        String name = userRegistrationViewDto.name();
+    private void checkName(UserRegistrationControllerDto user, LoadValidationResult loadValidationResult) {
+        String name = user.name();
         if(isEmptyString(name)) {
             loadValidationResult.add(LoadError.of("name", TypeLoadError.EMPTY));
         } else if(!nameCheck.isCorrect(name)) {
@@ -48,30 +49,30 @@ public class RegistrationUserValidator {
         }
     }
 
-    private void checkEmail(UserRegistrationViewDto userRegistrationViewDto, LoadValidationResult loadValidationResult) {
-        String email = userRegistrationViewDto.email();
+    private void checkEmail(UserRegistrationControllerDto user, LoadValidationResult loadValidationResult) {
+        String email = user.email();
         if(isEmptyString(email)) {
             loadValidationResult.add(LoadError.of("email", TypeLoadError.EMPTY));
         } else if(!emailCheck.isCorrect(email)) {
             loadValidationResult.add(LoadError.of("email", TypeLoadError.INCORRECT));
-        } else if(userExistsDao.existByEmail(email)) {
+        } else if(userExistsDao.existsByEmail(email)) {
             loadValidationResult.add(LoadError.of("email", TypeLoadError.NON_UNIQUE));
         }
     }
 
-    private void checkPhone(UserRegistrationViewDto userRegistrationViewDto, LoadValidationResult loadValidationResult) {
-        String phone = userRegistrationViewDto.phone();
+    private void checkPhone(UserRegistrationControllerDto user, LoadValidationResult loadValidationResult) {
+        String phone = user.phone();
         if(isEmptyString(phone)) {
             loadValidationResult.add(LoadError.of("phone", TypeLoadError.EMPTY));
         } else if(!phoneCheck.isCorrect(phone)) {
             loadValidationResult.add(LoadError.of("phone", TypeLoadError.INCORRECT));
-        } else if(userExistsDao.existByPhone(phone)) {
+        } else if(userExistsDao.existsByPhone(phone)) {
             loadValidationResult.add(LoadError.of("phone", TypeLoadError.NON_UNIQUE));
         }
     }
 
-    private void checkPassword(UserRegistrationViewDto userRegistrationViewDto, LoadValidationResult loadValidationResult) {
-        String password = userRegistrationViewDto.password();
+    private void checkPassword(UserRegistrationControllerDto user, LoadValidationResult loadValidationResult) {
+        String password = user.password();
         if(isEmptyString(password)) {
             loadValidationResult.add(LoadError.of("password", TypeLoadError.EMPTY));
         } else if(!passwordCheck.isCorrect(password)) {

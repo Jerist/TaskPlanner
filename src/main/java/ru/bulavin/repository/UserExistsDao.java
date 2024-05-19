@@ -1,7 +1,7 @@
 package ru.bulavin.repository;
 
 import ru.bulavin.exception.DaoException;
-import ru.bulavin.processing.ConnectionGetter;
+import ru.bulavin.processing.connection.ConnectionGetter;
 
 
 import java.sql.Connection;
@@ -22,11 +22,11 @@ public class UserExistsDao {
     //language=PostgreSQL
     private static final String SELECT_1_BY_PHONE = "SELECT 1 FROM \"user\" WHERE phone = ?;";
 
-    public boolean existByEmail(String email) {
+    public boolean existsByEmail(String email) {
         return executeQuery(email, SELECT_1_BY_EMAIL);
     }
 
-    public boolean existByPhone(String phone) {
+    public boolean existsByPhone(String phone) {
         return executeQuery(phone, SELECT_1_BY_PHONE);
     }
 
