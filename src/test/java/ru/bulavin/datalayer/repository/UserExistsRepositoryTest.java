@@ -1,9 +1,7 @@
 package ru.bulavin.datalayer.repository;
 
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.bulavin.datalayer.TestConnectionGetter;
 import ru.bulavin.entity.User;
 import ru.bulavin.repository.UserDao;
@@ -14,9 +12,9 @@ import java.sql.Connection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserExistsRepositoryTest {
-    private static final TestConnectionGetter connectionGetter = TestConnectionGetter.getInstance();
+    private final TestConnectionGetter connectionGetter = TestConnectionGetter.getInstance();
     private final UserExistsDao userExistsRepository = new UserExistsDao(connectionGetter);
-    private static final UserDao userRepository = new UserDao(connectionGetter);
+    private final UserDao userRepository = new UserDao(connectionGetter);
 
 
     private static User defaultUser() {
@@ -30,8 +28,8 @@ class UserExistsRepositoryTest {
     }
 
     @SneakyThrows
-    @AfterAll
-    public static void clear() {
+    @AfterEach
+    public void clear() {
         Connection connection = connectionGetter.get();
         //language=PostgreSQL
         String CLEAR_TABLE = "TRUNCATE taskplanner_test.public.user RESTART IDENTITY CASCADE";
@@ -39,8 +37,8 @@ class UserExistsRepositoryTest {
     }
 
     @SneakyThrows
-    @BeforeAll
-    public static void insertUser() {
+    @BeforeEach
+    public  void insertUser() {
         User user = defaultUser();
         userRepository.insert(user);
     }
