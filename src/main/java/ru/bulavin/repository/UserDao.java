@@ -3,7 +3,7 @@ package ru.bulavin.repository;
 import ru.bulavin.dto.user.controller.UserPasswordAndSaltControllerDto;
 import ru.bulavin.entity.User;
 import ru.bulavin.exception.DaoException;
-import ru.bulavin.processing.ConnectionGetter;
+import ru.bulavin.processing.connection.ConnectionGetter;
 
 
 import java.sql.Connection;
@@ -45,18 +45,19 @@ public class UserDao implements BaseDao<User>{
             "WHERE id_user = ?;";
 
     @Override
-    public void insert(User user) {
+    public boolean insert(User user) {
         try (Connection connection = connectionGetter.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(user, preparedStatement);
 
-            preparedStatement.executeUpdate();
+            boolean result = preparedStatement.executeUpdate() > 0;
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 user.setIdUser(generatedKeys.getLong("id_user"));
             }
+            return result;
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }
@@ -168,14 +169,16 @@ public class UserDao implements BaseDao<User>{
     private User extractUserFromResultSet(ResultSet resultSet) throws SQLException {
         Long id = resultSet.getLong("id_user");
         String name = resultSet.getString("name");
-        String phone = resultSet.getString("phone");
+        String phone = resultSet.getString("phone").trim();
         String email = resultSet.getString("email");
+        String salt = resultSet.getString("salt");
         String password = resultSet.getString("password");
         return User.builder()
                 .idUser(id)
                 .name(name)
                 .phone(phone)
                 .email(email)
+                .salt(salt)
                 .password(password)
                 .build();
     }

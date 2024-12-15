@@ -4,7 +4,7 @@ import ru.bulavin.entity.Priority;
 import ru.bulavin.entity.Status;
 import ru.bulavin.entity.Task;
 import ru.bulavin.exception.DaoException;
-import ru.bulavin.processing.ConnectionGetter;
+import ru.bulavin.processing.connection.ConnectionGetter;
 
 
 import java.sql.Connection;
@@ -57,18 +57,19 @@ public class TaskDao implements BaseDao<Task> {
 
 
     @Override
-    public void insert(Task task) {
+    public boolean insert(Task task) {
         try (Connection connection = connectionGetter.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS)) {
 
             setStatement(task, preparedStatement);
 
-            preparedStatement.executeUpdate();
+            boolean result = preparedStatement.executeUpdate() > 0;
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 task.setIdTask(generatedKeys.getLong("id_task"));
             }
+            return result;
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }
@@ -164,29 +165,13 @@ public class TaskDao implements BaseDao<Task> {
         return tasks;
     };
 
-    public List<Task> selectByProjectId(Long id) {
-        List<Task> tasks = new ArrayList<>();
-        try (Connection connection = connectionGetter.get();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TASKS_BY_PROJECT_ID);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            preparedStatement.setLong(1, id);
-            while (resultSet.next()) {
-                tasks.add(extractTaskFromResultSet(resultSet));
-            }
-        } catch (SQLException | InterruptedException e) {
-            throw new DaoException(e);
-        }
-        return tasks;
-    };
-
     private void setStatement(Task task, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, task.getName());
         preparedStatement.setString(2, task.getDescription());
-        preparedStatement.setTimestamp(3, Timestamp.valueOf(task.getDateStart()));
+        preparedStatement.setTimestamp(3, task.getDateStart()==null?null:Timestamp.valueOf(task.getDateStart()));
         preparedStatement.setTimestamp(4, task.getDeadline()==null?null:Timestamp.valueOf(task.getDeadline()));
-        preparedStatement.setString(5, task.getStatus().toString());
-        preparedStatement.setString(6, task.getPriority().toString());
+        preparedStatement.setString(5, task.getStatus()==null?null:task.getStatus().toString());
+        preparedStatement.setString(6, task.getPriority()==null?null:task.getPriority().toString());
         preparedStatement.setLong(7, task.getIdUser());
     }
     private Task extractTaskFromResultSet(ResultSet resultSet) throws SQLException {

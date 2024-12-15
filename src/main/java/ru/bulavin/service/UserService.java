@@ -17,13 +17,10 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordHashed passwordHashed;
     private final UserDao userDao;
-    //private final UpdateUserValidator updateUserValidator;
-    public UserService(UserMapper userMapper, PasswordHashed passwordHashed, UserDao userDao/*,
-                       UpdateUserValidator updateUserValidator*/) {
+    public UserService(UserMapper userMapper, PasswordHashed passwordHashed, UserDao userDao) {
         this.userMapper = userMapper;
         this.passwordHashed = passwordHashed;
         this.userDao = userDao;
-        //this.updateUserValidator = updateUserValidator;
     }
     public void insertUser(UserRegistrationControllerDto userRegistrationControllerDto) {
         String salt = userRegistrationControllerDto.name();

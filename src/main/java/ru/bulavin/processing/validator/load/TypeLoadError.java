@@ -3,8 +3,7 @@ package ru.bulavin.processing.validator.load;
 public enum TypeLoadError {
     NON_UNIQUE("Non-unique value"),
     EMPTY("Empty value"),
-    INCORRECT("Incorrect value"),
-    YOUNG_USER("User too young");
+    INCORRECT("Incorrect value");
 
     private final String description;
 

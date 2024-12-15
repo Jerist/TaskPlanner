@@ -2,10 +2,9 @@ package ru.bulavin.repository;
 
 import ru.bulavin.entity.Priority;
 import ru.bulavin.entity.Status;
-import ru.bulavin.entity.Task;
 import ru.bulavin.entity.TaskInProject;
 import ru.bulavin.exception.DaoException;
-import ru.bulavin.processing.ConnectionGetter;
+import ru.bulavin.processing.connection.ConnectionGetter;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -50,35 +49,36 @@ public class TaskInProjectDao implements BaseDao<TaskInProject> {
             "WHERE taskinproject.id_task = ? AND taskinproject.id_project = ?;";
 
 
-    public void insert(Long idProject, Long idTask) {
+    public boolean insert(Long idProject, Long idTask) {
         try (Connection connection = connectionGetter.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TASK_IN_PROJECT, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setLong(1, idProject);
-            preparedStatement.setLong(2, idTask);
-
-            preparedStatement.executeUpdate();
+            preparedStatement.setLong(1, idTask);
+            preparedStatement.setLong(2, idProject);
+            boolean result = preparedStatement.executeUpdate() > 0;
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
+            return result;
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public void insert(TaskInProject taskInProject) {
+    public boolean insert(TaskInProject taskInProject) {
         try (Connection connection = connectionGetter.get();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_TASK_IN_PROJECT, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setLong(1, taskInProject.getIdTask());
             preparedStatement.setLong(2, taskInProject.getIdProject());
 
-            preparedStatement.executeUpdate();
+            boolean result = preparedStatement.executeUpdate() > 0;
 
             var generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 taskInProject.setIdTask(generatedKeys.getLong("id_task_in_project"));
             }
+            return result;
         } catch (SQLException | InterruptedException e) {
             throw new DaoException(e);
         }

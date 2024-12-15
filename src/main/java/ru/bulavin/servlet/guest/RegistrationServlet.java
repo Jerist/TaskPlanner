@@ -50,7 +50,7 @@ public class RegistrationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 
         final UserRegistrationViewDto userRegistrationViewDto = getUserRegistrationViewDto(req);
-        final LoadValidationResult result = registrationUserValidator.isValid(userRegistrationViewDto);
+        final LoadValidationResult result = registrationUserValidator.isValid(userMapper.map(userRegistrationViewDto));
 
         if (result.isEmpty()) {
             UserRegistrationControllerDto userRegistrationControllerDto = userMapper.map(userRegistrationViewDto);

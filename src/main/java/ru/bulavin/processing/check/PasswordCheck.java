@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class PasswordCheck {
 
 
-    public boolean isCorrect(String string) {
-        return true;
+    public boolean isCorrect(String password) {
+        return !password.isEmpty();
     }
 }

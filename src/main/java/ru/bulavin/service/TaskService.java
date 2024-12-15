@@ -17,9 +17,9 @@ public class TaskService {
         this.taskMapper = taskMapper;
     }
 
-    public void insertTask(TaskControllerDto taskControllerDto) {
+    public boolean insertTask(TaskControllerDto taskControllerDto) {
         Task task = taskMapper.map(taskControllerDto);
-        taskDao.insert(task);
+        return taskDao.insert(task);
     }
     public List<TaskControllerDto> selectAllTasksByUserId(Long id) {
         return taskDao.selectByUserId(id).stream().map(taskMapper::map).collect(Collectors.toList());
@@ -30,10 +30,10 @@ public class TaskService {
     public TaskControllerDto selectById(Long id) {
         return taskMapper.map(taskDao.selectById(id));
     }
-    public void deleteTask(Long id) {
-        taskDao.delete(id);
+    public int deleteTask(Long id) {
+        return taskDao.delete(id);
     }
-    public void update(TaskControllerDto task) {
-        taskDao.update(taskMapper.map(task));
+    public int update(TaskControllerDto task) {
+        return taskDao.update(taskMapper.map(task));
     }
 }
